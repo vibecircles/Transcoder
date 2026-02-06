@@ -29,13 +29,18 @@ function getSupabase() {
 }
 
 function getR2Client() {
+  // Support Railway S3 or Cloudflare R2
+  const endpoint = process.env.S3_ENDPOINT ||
+    `https://${requireEnv('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com`;
+  
   return new S3Client({
-    region: 'auto',
-    endpoint: `https://${requireEnv('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com`,
+    region: process.env.S3_REGION || 'auto',
+    endpoint,
     credentials: {
       accessKeyId: requireEnv('R2_ACCESS_KEY_ID'),
       secretAccessKey: requireEnv('R2_SECRET_ACCESS_KEY')
-    }
+    },
+    forcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true' // Some S3-compatible services need this
   });
 }
 
