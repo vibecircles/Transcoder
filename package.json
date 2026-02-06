@@ -1,0 +1,17 @@
+{
+  "name": "vibecircle-transcoder",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Backend-only transcoding worker dependencies (kept out of the frontend bundle).",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node worker.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.499.0",
+    "@aws-sdk/s3-request-presigner": "^3.499.0",
+    "@supabase/supabase-js": "^2.36.0",
+    "ffmpeg-static": "^5.1.0",
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}
