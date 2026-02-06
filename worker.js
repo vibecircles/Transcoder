@@ -29,23 +29,20 @@ function getSupabase() {
 }
 
 function getR2Client() {
-  // Support Railway S3 or Cloudflare R2
-  const endpoint = process.env.S3_ENDPOINT ||
-    `https://${requireEnv('R2_ACCOUNT_ID')}.r2.cloudflarestorage.com`;
-  
+  // Support Railway S3 or any S3-compatible storage
   return new S3Client({
     region: process.env.S3_REGION || 'auto',
-    endpoint,
+    endpoint: requireEnv('S3_ENDPOINT'),
     credentials: {
-      accessKeyId: requireEnv('R2_ACCESS_KEY_ID'),
-      secretAccessKey: requireEnv('R2_SECRET_ACCESS_KEY')
+      accessKeyId: requireEnv('S3_ACCESS_KEY_ID'),
+      secretAccessKey: requireEnv('S3_SECRET_ACCESS_KEY')
     },
-    forcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true' // Some S3-compatible services need this
+    forcePathStyle: process.env.S3_FORCE_PATH_STYLE === 'true' // Railway and some S3-compatible services need this
   });
 }
 
 async function getR2SignedUrl(client, key, method, expiresInSeconds) {
-  const bucket = requireEnv('R2_BUCKET');
+  const bucket = requireEnv('S3_BUCKET');
   if (method === 'PUT') {
     return getSignedUrl(client, new PutObjectCommand({ Bucket: bucket, Key: key }), {
       expiresIn: expiresInSeconds
@@ -73,7 +70,7 @@ async function downloadToFile(url, outputPath) {
 }
 
 async function uploadFileToR2(client, key, filePath, contentType) {
-  const bucket = requireEnv('R2_BUCKET');
+  const bucket = requireEnv('S3_BUCKET');
   await client.send(
     new PutObjectCommand({
       Bucket: bucket,
